@@ -1,0 +1,7 @@
+{
+  "attachmentFolderPath": "raw/assets",
+  "userIgnoreFilters": [".cache", ".wiki", ".llm-wiki"],
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "showUnsupportedFiles": false
+}
