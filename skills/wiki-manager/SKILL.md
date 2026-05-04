@@ -1,15 +1,28 @@
 ---
 name: wiki-manager
-description: "Personal knowledge base (wiki) management — search, ingest, knowledge graph, quality check, deep research"
-version: 1
-triggers: ["wiki", "知识库", "搜索wiki", "摄入文档", "知识图谱", "深度研究", "wiki search", "wiki ingest"]
-tools_required: [file_read, file_write, file_edit, shell_exec, web_search]
-tags: [knowledge, wiki, research, note-taking]
+description: "Personal knowledge base (wiki) management — search, ingest, knowledge graph, quality check, deep research. Use when: (1) creating or managing a wiki/knowledge base, (2) searching wiki pages, (3) ingesting documents into wiki, (4) analyzing knowledge graph, (5) checking wiki quality, (6) deep research on a topic. Triggers: wiki, 知识库, 搜索wiki, 摄入文档, 知识图谱, 深度研究, wiki search, wiki ingest"
+metadata:
+  openclaw:
+    emoji: "📚"
+    requires:
+      bins: ["python3"]
 ---
 
 ## Goal
 
-Manage a personal knowledge base (wiki) with structured pages, cross-references, and AI-powered ingestion. All wiki projects are stored in `~/.hermes/wikis/` by default, with a format compatible with the llm_wiki desktop app.
+Manage a personal knowledge base (wiki) with structured pages, cross-references, and AI-powered ingestion. All wiki projects are stored in `~/.hermes/wikis/` by default (Hermes) or `~/.openclaw/wikis/` (OpenClaw), with a format compatible with the llm_wiki desktop app.
+
+## Scripts Location
+
+Scripts are in the `scripts/` directory within this skill folder. Resolve the path based on your platform:
+
+| Platform | Skill install path |
+|----------|-------------------|
+| Hermes | `~/.hermes/skills/wiki-manager/scripts/` |
+| OpenClaw | `~/.openclaw/skills/wiki-manager/scripts/` |
+| Claude Code | `~/.claude/skills/wiki-manager/scripts/` |
+
+In examples below, replace `<SKILL_DIR>` with your platform's path.
 
 ## Core Operations
 
@@ -18,10 +31,10 @@ Manage a personal knowledge base (wiki) with structured pages, cross-references,
 When the user wants to create a new knowledge base:
 
 ```bash
-python ~/.hermes/skills/wiki-manager/scripts/wiki-init.py <project-name> --template <general|research|reading|personal|business>
+python <SKILL_DIR>/scripts/wiki-init.py <project-name> --template <general|research|reading|personal|business>
 ```
 
-This creates the directory structure at `~/.hermes/wikis/<project-name>/` with:
+This creates the directory structure at the default wiki storage path with:
 - `raw/sources/` — for original documents
 - `wiki/entities/`, `wiki/concepts/`, `wiki/sources/`, etc. — for wiki pages
 - `schema.md`, `purpose.md` — project metadata
@@ -38,7 +51,7 @@ Templates add extra directories:
 When the user asks to find information in the wiki:
 
 ```bash
-python ~/.hermes/skills/wiki-manager/scripts/wiki-search.py <project-name> "<query>"
+python <SKILL_DIR>/scripts/wiki-search.py <project-name> "<query>"
 ```
 
 Returns JSON array of matching pages with title, path, snippet, and score.
@@ -61,7 +74,7 @@ When the user wants to add a document to the wiki, follow these steps:
 
 **Step 4 — Parse and write**: Parse the FILE blocks using:
 ```bash
-python ~/.hermes/skills/wiki-manager/scripts/wiki-parse.py --parse-files < <generation-output>
+python <SKILL_DIR>/scripts/wiki-parse.py --parse-files < <generation-output>
 ```
 For each parsed file:
 - If the page already exists, use `wiki-merge.py` to merge frontmatter, then call LLM with the **Merger Prompt** from `reference.md` to merge the body.
@@ -72,7 +85,7 @@ For each parsed file:
 
 **Step 6 — Vectorize** (optional): If embedding is configured:
 ```bash
-python ~/.hermes/skills/wiki-manager/scripts/wiki-chunk.py <project-name> wiki/entities/page-slug.md
+python <SKILL_DIR>/scripts/wiki-chunk.py <project-name> wiki/entities/page-slug.md
 ```
 
 ### 4. Enrich Wikilinks
@@ -89,7 +102,7 @@ When the user wants to add cross-references to a page:
 When the user wants to understand the wiki structure:
 
 ```bash
-python ~/.hermes/skills/wiki-manager/scripts/wiki-graph.py <project-name>
+python <SKILL_DIR>/scripts/wiki-graph.py <project-name>
 ```
 
 Returns: nodes, edges, communities (Louvain), surprising connections, and knowledge gaps.
@@ -99,7 +112,7 @@ Returns: nodes, edges, communities (Louvain), surprising connections, and knowle
 When the user wants to audit the wiki:
 
 ```bash
-python ~/.hermes/skills/wiki-manager/scripts/wiki-lint.py <project-name>
+python <SKILL_DIR>/scripts/wiki-lint.py <project-name>
 ```
 
 Returns: orphan pages, broken wikilinks, pages with no outlinks, missing frontmatter fields.
@@ -131,7 +144,8 @@ When the user wants to research a topic and add it to the wiki:
 
 ## Project Path Resolution
 
-- Default: `~/.hermes/wikis/<project-name>/`
+- Hermes default: `~/.hermes/wikis/<project-name>/`
+- OpenClaw default: `~/.openclaw/wikis/<project-name>/`
 - Custom: pass `--path` to any script
 - All scripts accept `<project-name>` as first argument (resolves to default path)
 
@@ -140,6 +154,6 @@ When the user wants to research a topic and add it to the wiki:
 Wiki projects created by this skill are fully compatible with the [llm_wiki](https://github.com/zhanghc1122/llm_wiki) desktop app. To open in llm_wiki:
 1. Open llm_wiki
 2. Click "Open Project"
-3. Navigate to `~/.hermes/wikis/<project-name>/`
+3. Navigate to the wiki project directory
 
 The directory structure, frontmatter format, wikilink syntax, and LanceDB vector schema are identical.

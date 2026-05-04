@@ -310,13 +310,22 @@ def detect_knowledge_gaps(nodes: List[dict], communities: Dict, limit: int = 8) 
     return gaps[:limit]
 
 
+def default_wikis_dir() -> Path:
+    """Resolve default wiki storage dir based on detected platform."""
+    home = Path.home()
+    for candidate in [home / ".openclaw" / "wikis", home / ".hermes" / "wikis"]:
+        if candidate.parent.exists():
+            return candidate
+    return home / ".hermes" / "wikis"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Build wiki knowledge graph")
     parser.add_argument("project", help="Project name")
     parser.add_argument("--path", "-p", default=None, help="Custom project path")
     args = parser.parse_args()
 
-    project_path = Path(args.path) if args.path else Path.home() / ".hermes" / "wikis" / args.project
+    project_path = Path(args.path) if args.path else default_wikis_dir() / args.project
     result = build_graph(project_path)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

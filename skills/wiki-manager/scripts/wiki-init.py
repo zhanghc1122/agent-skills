@@ -46,12 +46,20 @@ OBSIDIAN_FILES = {
 }
 
 
+def default_wikis_dir() -> Path:
+    """Resolve default wiki storage dir based on detected platform."""
+    home = Path.home()
+    for candidate in [home / ".openclaw" / "wikis", home / ".hermes" / "wikis"]:
+        if candidate.parent.exists():
+            return candidate
+    return home / ".hermes" / "wikis"
+
+
 def init_project(name: str, template: str = "general", path: Optional[str] = None) -> str:
     if path:
         project_dir = Path(path)
     else:
-        hermes_dir = Path.home() / ".hermes" / "wikis"
-        project_dir = hermes_dir / name
+        project_dir = default_wikis_dir() / name
 
     if project_dir.exists():
         existing = [p.name for p in project_dir.iterdir()]
@@ -117,7 +125,7 @@ def main():
                         choices=["general", "research", "reading", "personal", "business"],
                         help="Project template (default: general)")
     parser.add_argument("--path", "-p", default=None,
-                        help="Custom project path (default: ~/.hermes/wikis/<name>)")
+                        help="Custom project path (default: auto-detected wikis dir/<name>)")
     args = parser.parse_args()
     init_project(args.name, args.template, args.path)
 

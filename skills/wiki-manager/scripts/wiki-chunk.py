@@ -233,6 +233,15 @@ def store_in_lancedb(project_path: Path, page_id: str, chunks: List[dict],
         db.create_table(table_name, records)
 
 
+def default_wikis_dir() -> Path:
+    """Resolve default wiki storage dir based on detected platform."""
+    home = Path.home()
+    for candidate in [home / ".openclaw" / "wikis", home / ".hermes" / "wikis"]:
+        if candidate.parent.exists():
+            return candidate
+    return home / ".hermes" / "wikis"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Chunk and embed a wiki page")
     parser.add_argument("project", help="Project name")
@@ -245,7 +254,7 @@ def main():
     parser.add_argument("--no-embed", action="store_true", help="Only chunk, skip embedding")
     args = parser.parse_args()
 
-    project_path = Path(args.path) if args.path else Path.home() / ".hermes" / "wikis" / args.project
+    project_path = Path(args.path) if args.path else default_wikis_dir() / args.project
     page_path = project_path / args.page
 
     if not page_path.exists():

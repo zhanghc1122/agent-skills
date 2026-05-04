@@ -2,6 +2,11 @@
 
 Manage personal knowledge bases (wikis) with AI-powered ingestion, search, graph analysis, and quality checks.
 
+## Scripts Location
+
+All scripts are in `~/.claude/skills/wiki-manager/scripts/`
+All prompt templates are in `~/.claude/skills/wiki-manager/reference.md`
+
 ## Available Commands
 
 ### Initialize a Wiki Project
@@ -44,7 +49,3 @@ python ~/.claude/skills/wiki-manager/scripts/wiki-lint.py <project>
 - related field uses bare slugs: `related: [gpt-4, transformers]`
 - Merge existing pages, don't overwrite
 - Check wiki/index.md before creating new pages to avoid duplicates
-
-## Scripts Location
-All scripts are in `~/.claude/skills/wiki-manager/scripts/`
-All prompt templates are in `~/.claude/skills/wiki-manager/reference.md`

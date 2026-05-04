@@ -128,10 +128,19 @@ def extract_snippet(content: str, query_str: str, max_len: int = 200) -> str:
 
 # --- Main search ---
 
+def default_wikis_dir() -> Path:
+    """Resolve default wiki storage dir based on detected platform."""
+    home = Path.home()
+    for candidate in [home / ".openclaw" / "wikis", home / ".hermes" / "wikis"]:
+        if candidate.parent.exists():
+            return candidate
+    return home / ".hermes" / "wikis"
+
+
 def get_project_path(name: str, path: Optional[str] = None) -> Path:
     if path:
         return Path(path)
-    return Path.home() / ".hermes" / "wikis" / name
+    return default_wikis_dir() / name
 
 
 def search_wiki(project_path: Path, query: str, top_k: int = 20) -> List[dict]:
