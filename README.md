@@ -7,6 +7,7 @@ A collection of AI agent skills for knowledge management, research, and producti
 | Skill | Description | Status |
 |-------|-------------|--------|
 | [wiki-manager](skills/wiki-manager/) | Personal knowledge base (wiki) management — search, ingest, graph, lint, deep research | Ready |
+| [multi-platform-compat](skills/multi-platform-compat/) | Make skills compatible with OpenClaw, Hermes, and Claude Code — format specs, scaffold, checklist | Ready |
 
 ## Installation
 
